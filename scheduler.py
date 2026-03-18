@@ -19,7 +19,7 @@ def save_history(ipo_name):
 def run():
 
     data = get_ipos()
-
+    print(data)
     history = load_history()
 
     new_ipos = []
