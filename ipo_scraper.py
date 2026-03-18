@@ -4,17 +4,26 @@ def get_ipos():
     url = "https://www.nseindia.com/api/ipo-current-issue"
 
     headers = {
-        "User-Agent": "Mozilla/5.0",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+        "Accept": "application/json",
         "Accept-Language": "en-US,en;q=0.9",
-        "Accept-Encoding": "gzip, deflate, br",
+        "Referer": "https://www.nseindia.com/market-data/ipo",
         "Connection": "keep-alive"
     }
 
     try:
         session = requests.Session()
-        session.get("https://www.nseindia.com", headers=headers)  # 👈 important
 
-        response = session.get(url, headers=headers)
+        # Step 1: Visit homepage (sets cookies)
+        session.get("https://www.nseindia.com", headers=headers, timeout=5)
+
+        # Step 2: Actual API call
+        response = session.get(url, headers=headers, timeout=5)
+
+        if response.status_code != 200:
+            print("Failed to fetch data:", response.status_code)
+            return []
+
         data = response.json()
 
         ipo_list = []
