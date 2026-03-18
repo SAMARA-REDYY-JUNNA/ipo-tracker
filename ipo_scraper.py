@@ -3,20 +3,25 @@ from bs4 import BeautifulSoup
 
 def get_ipos():
     url = "https://www.chittorgarh.com/ipo/ipo_list.asp"
-    response = requests.get(url)
+    
+    headers = {
+        "User-Agent": "Mozilla/5.0"
+    }
 
+    response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.text, "html.parser")
-
-    table = soup.find("table", {"class": "table"})
 
     ipo_list = []
 
-    if table:
-        rows = table.find_all("tr")[1:]
+    tables = soup.find_all("table")
 
-        for row in rows:
+    for table in tables:
+        rows = table.find_all("tr")
+
+        for row in rows[1:]:
             cols = row.find_all("td")
-            if len(cols) > 0:
+
+            if len(cols) >= 5:
                 ipo = {
                     "name": cols[0].text.strip(),
                     "open_date": cols[1].text.strip(),
