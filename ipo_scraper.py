@@ -24,15 +24,14 @@ def get_ipos():
         ipo_list = []
 
         # ✅ FIX HERE
-        if isinstance(data, list):
-            for item in data:
-                ipo = {
-                    "name": item.get("companyName", ""),
-                    "open_date": item.get("openDate", ""),
-                    "close_date": item.get("closeDate", ""),
-                    "price": item.get("priceBand", "")
-                }
-                ipo_list.append(ipo)
+    for item in data:
+        ipo = {
+            "name": item.get("companyName") or item.get("symbol", ""),
+            "open_date": item.get("openDate") or item.get("issueStartDate", ""),
+            "close_date": item.get("closeDate") or item.get("issueEndDate", ""),
+            "price": item.get("priceBand") or item.get("faceValue", "")
+    }
+        ipo_list.append(ipo)
 
         return ipo_list
 
