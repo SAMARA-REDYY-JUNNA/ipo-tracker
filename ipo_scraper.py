@@ -1,33 +1,25 @@
 import requests
-from bs4 import BeautifulSoup
 
 def get_ipos():
-    url = "https://www.chittorgarh.com/ipo/ipo_list.asp"
-    
-    headers = {
-        "User-Agent": "Mozilla/5.0"
-    }
+    url = "https://api.stockedge.com/Api/IPO/GetIPOCalendar"
 
-    response = requests.get(url, headers=headers)
-    soup = BeautifulSoup(response.text, "html.parser")
+    try:
+        response = requests.get(url)
+        data = response.json()
 
-    ipo_list = []
+        ipo_list = []
 
-    tables = soup.find_all("table")
+        for item in data:
+            ipo = {
+                "name": item.get("companyName", ""),
+                "open_date": item.get("openDate", ""),
+                "close_date": item.get("closeDate", ""),
+                "price": item.get("priceBand", "")
+            }
+            ipo_list.append(ipo)
 
-    for table in tables:
-        rows = table.find_all("tr")
+        return ipo_list
 
-        for row in rows[1:]:
-            cols = row.find_all("td")
-
-            if len(cols) >= 5:
-                ipo = {
-                    "name": cols[0].text.strip(),
-                    "open_date": cols[1].text.strip(),
-                    "close_date": cols[2].text.strip(),
-                    "price": cols[4].text.strip()
-                }
-                ipo_list.append(ipo)
-
-    return ipo_list
+    except Exception as e:
+        print("Error fetching IPO data:", e)
+        return []
